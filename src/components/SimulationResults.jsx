@@ -1,7 +1,7 @@
 // src/components/SimulationResults.jsx
 
 import React from 'react';
-import ApexCandlestickChart from './ApexCandlestickChart';
+import LightweightCandlestickChart from './LightweightCandlestickChart';
 import StockChart from './StockChart';
 import './SimulationResults.css'; // Import CSS for styling
 
@@ -16,7 +16,7 @@ const SimulationResults = ({ result }) => {
       <h3>Closing Price Line Chart</h3>
       <StockChart ohlcvData={result.ohlcv_data} />
       <h3>Candlestick Chart</h3>
-      <ApexCandlestickChart ohlcvData={result.ohlcv_data} />
+      <LightweightCandlestickChart ohlcvData={result.ohlcv_data} />
     </div>
   );
 };

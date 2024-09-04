@@ -72,6 +72,7 @@ src/
 │ ├── SimulationForm.jsx # Form for inserting simulation data
 │ ├── SimulationResults.jsx # Display of simulation results
 │ ├── ApexCandlestickChart.jsx # Candlestick chart using ApexCharts
+│ ├── LightweightCandlestickChart.jsx # Candlestick chart using TradingView
 │ ├── StockChart.jsx # Line Chart using Chart.js
 ├── pages/ # Main pages of the application
 │ └── HomePage.jsx # Home page that contains the form and results
@@ -97,4 +98,4 @@ This project is licensed under the MIT License. See the LICENSE file for more in
 If you have any questions or suggestions, feel free to open an issue in the repository or get in touch at fnldesign@hotmail.com.
 
 ## Thanks
-Special thanks to the open source libraries and frameworks used in this project, including React, ApexCharts, and Chart.js.
+Special thanks to the open source libraries and frameworks used in this project, including React, ApexCharts, TradingView and Chart.js.
