@@ -1,0 +1,30 @@
+/* src/components/SimulationForm.css */
+
+form {
+  padding: 20px; /* Padding inside the form */
+  display: flex;
+  flex-direction: column; /* Stack form elements vertically */
+  gap: 15px; /* Add spacing between form elements */
+  box-sizing: border-box; /* Include padding and border in width */
+}
+
+input,
+button {
+  width: 100%; /* Ensure inputs and button take full width */
+  padding: 10px;
+  margin-bottom: 10px; /* Add margin to inputs and button */
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #007bff; /* Button color */
+  color: #fff; /* Text color */
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3; /* Hover color */
+}
