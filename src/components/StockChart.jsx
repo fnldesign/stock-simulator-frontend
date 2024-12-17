@@ -1,11 +1,10 @@
-// src/components/StockChart.jsx
-
 import React from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, TimeScale, LineElement, PointElement, Tooltip, Legend, Title } from 'chart.js';
 import { Chart } from 'react-chartjs-2';
+import { format, parseISO } from 'date-fns';
+import _ from 'lodash';
 import 'chartjs-adapter-date-fns';
 
-// Register the necessary components for the line chart
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -17,18 +16,61 @@ ChartJS.register(
   Title
 );
 
-const StockChart = ({ ohlcvData }) => {
-  // Prepare data for the line chart (closing prices over time)
+const StockChart = ({
+  ohlcvData,
+  label,
+  xField,
+  yField,
+  xFieldFormat = 'yyyy-MM-dd', // Default daily format
+  yFieldFormat = 'rounded',
+}) => {
+  // Formatar eixo X dinamicamente
+  const formatXAxis = (value) => {
+    const date = new Date(value);
+    return format(date, xFieldFormat); // Formata no formato especificado
+  };
+
+  // Formatar eixo Y dinamicamente
+  const formatYAxis = (value) => {
+    if (yFieldFormat === 'percent') {
+      return `${parseFloat(value).toFixed(2)} %`;
+    }
+    if (yFieldFormat === 'rounded') {
+      return parseFloat(value).toFixed(2);
+    }
+    return value;
+  };
+
+  // Agrupar os dados por mês se necessário
+  const aggregateDataByMonth = (data) => {
+    const grouped = _.groupBy(data, (entry) =>
+      format(parseISO(entry[xField]), 'yyyy-MM')
+    );
+
+    return Object.keys(grouped).map((month) => {
+      const avgValue =
+        grouped[month].reduce((sum, entry) => sum + entry[yField], 0) /
+        grouped[month].length;
+
+      return { Date: month, Value: avgValue };
+    });
+  };
+
+  // Aplicar agregação somente para o formato 'yyyy-MM'
+  const aggregatedData =
+    xFieldFormat === 'yyyy-MM' ? aggregateDataByMonth(ohlcvData) : ohlcvData;
+
+  // Preparar os dados para o gráfico
   const lineChartData = {
-    labels: ohlcvData.map((entry) => new Date(entry.Date).toISOString().split('T')[0]), // Format date to yyyy-mm-dd
+    labels: aggregatedData.map((entry) => formatXAxis(entry[xField] || entry.Date)),
     datasets: [
       {
-        label: 'Closing Price',
-        data: ohlcvData.map((entry) => entry.Close),
+        label: label,
+        data: aggregatedData.map((entry) => formatYAxis(entry[yField] || entry.Value)),
         borderColor: 'rgba(54, 162, 235, 1)',
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         fill: false,
-        tension: 0.1, // Smooth line
+        tension: 0.0, // Suavização da linha
       },
     ],
   };
@@ -38,25 +80,26 @@ const StockChart = ({ ohlcvData }) => {
       x: {
         type: 'time',
         time: {
-          unit: 'day',
-          tooltipFormat: 'yyyy-MM-dd',
+          unit: xFieldFormat === 'yyyy-MM' ? 'month' : 'day',
+          tooltipFormat: xFieldFormat,
           displayFormats: {
+            month: 'yyyy-MM',
             day: 'yyyy-MM-dd',
           },
         },
         title: {
           display: true,
-          text: 'Date',
+          text: xField,
         },
       },
       y: {
         title: {
           display: true,
-          text: 'Closing Price',
+          text: yField,
         },
       },
     },
-    maintainAspectRatio: false, // Adjust size to fit the container
+    maintainAspectRatio: false,
   };
 
   return (

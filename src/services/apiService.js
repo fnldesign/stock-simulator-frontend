@@ -13,5 +13,5 @@ export const simulateInvestment = async (data) => {
   };
 
   const response = await axios.post(`${BASE_URL}/simulate`, requestData);
-  return response.data;
+  return response;
 };

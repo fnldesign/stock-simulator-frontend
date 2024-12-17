@@ -8,6 +8,28 @@ form {
   box-sizing: border-box; /* Include padding and border in width */
 }
 
+.form-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.form-instructions {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  background-color: #ffe6e6;
+  padding: 10px;
+  border: 1px solid red;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
 input,
 button {
   width: 100%; /* Ensure inputs and button take full width */
@@ -19,12 +41,49 @@ button {
 }
 
 button {
-  background-color: #007bff; /* Button color */
+  background-color: #007bff !important;/* Button color. Ensure overwrite */
   color: #fff; /* Text color */
   border: none;
   cursor: pointer;
 }
 
 button:hover {
-  background-color: #0056b3; /* Hover color */
+  background-color: red !important; /* Hover color */
+}
+
+/* Campos Avançados */
+.accordion-container {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-top: 15px;
+  overflow: hidden;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8f9fa; /* Cor de fundo leve */
+  padding: 5px 5px;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.accordion-content {
+  padding: 5px;
+  background-color: #fff; /* Fundo branco */
+}
+
+/* Ajusta labels e selects dentro do accordion */
+.accordion-content label {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.accordion-content select {
+  margin-top: 5px;
+  background-color: #f9f9f9;
 }

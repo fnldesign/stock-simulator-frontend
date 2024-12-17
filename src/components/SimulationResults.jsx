@@ -14,7 +14,13 @@ const SimulationResults = ({ result }) => {
         <p>Value Change: ${result.value_change}</p>
       </div>
       <h3>Closing Price Line Chart</h3>
-      <StockChart ohlcvData={result.ohlcv_data} />
+      <StockChart 
+        ohlcvData={result.change_data}
+        label="Cumulative Return"
+        xField="Date"
+        yField="Cumulative_Return"
+        xFieldFormat="yyyy-MM" // Exemplo: 01 Jan 2023
+        yFieldFormat="rounded" />
       <h3>Candlestick Chart</h3>
       <LightweightCandlestickChart ohlcvData={result.ohlcv_data} />
     </div>
