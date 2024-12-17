@@ -1,51 +1,58 @@
-# Stock Investment Simulation Frontend
+# **Stock Investment Simulation Frontend**
 
-The **Stock Investment Simulation Frontend** is an application developed in React that allows users to simulate the performance of stock investments over time. The application collects historical stock price data from a Python Backend API and presents both line charts and candlestick charts to visualize the growth or decrease of investments over a given period.
+The **Stock Investment Simulation Frontend** is an application developed in React that allows users to simulate the performance of stock investments over time. The application collects historical stock price data from a Python Backend API and presents both **line charts** and **candlestick charts** to visualize the growth or decrease of investments over a given period.
 
-The main goal is to provide users with an intuitive and a learning devs tool to:
+---
 
-- Visualize the historical performance of a specific stock using interactive charts.
-- Calculate and display the growth or decrease rate of an investment based on historical data.
-- Enable visual analysis of market trends for investment decision-making.
+## **Key Features**
 
-This project is the frontend application for the **Stock Investment Simulation App**.
+- **Interactive Charts**: Visualize stock performance with line charts and candlestick charts.
+- **Advanced Options**: Configure analysis period and risk tolerance for custom simulations.
+- **Improved UX**: Enhanced user experience with collapsible "Advanced Options" and dynamic date behavior.
+- **Error Handling**: Display clear and informative error messages returned from the API.
+- **Environment-Based Configuration**: Default options (e.g., risk tolerance, analysis period) now load dynamically from environment variables.
 
-The app allows users to enter a stock symbol, an investment start and end date, and investment initial value to simulate investment growth or decline using historical stock price data.
+---
 
-![Main Screen](./stock_simulator_frontend_screnn.png)
+## **Overview**
 
-## Overview
+The frontend is built using **React** and leverages **Chart.js**, **ApexCharts**, and **TradingView Lightweight Charts** to visualize stock performance interactively. Users can simulate investment growth or decline by providing basic inputs such as stock symbol, date range, and investment amount.
 
-The frontend is built using **React** and utilizes charting libraries such as **Chart.js** and **ApexCharts** to visualize historical stock price data interactively, including line charts and candlestick charts .
+---
 
-## Technologies
+## **Technologies**
 
 - **React**: Frontend framework for building user interfaces.
-- **Chart.js**: Chart library for visualizing financial data with line graphs.
-- **ApexCharts**: Chart library for visualizing financial data with candlestick charts.
-- **Axios**: Library for making HTTP requests to the backend.
-- **CSS3**: Styling and responsive layout.
+- **Chart.js**: For line charts.
+- **ApexCharts**: For candlestick charts.
+- **Axios**: For HTTP requests to the backend.
+- **CSS3**: For responsive and clean UI styling.
+- **Environment Variables**: Dynamic configuration with `.env` files.
 
-## Installation
+---
 
-Follow the steps below to set up the project on your local machine:
+## **Installation**
 
-### Prerequisites
+Follow these steps to set up the project locally:
 
-- **Node.js** (recommended version: 14.x or higher)
-- **npm** (Node Package Manager) or **yarn** for package management
-- **Backend APIs** The backend for the project is available at https://github.com/fnldesign/stock-simulator-backend.git
+### **Prerequisites**
 
-### Installation
+- **Node.js** (recommended version: 20.x or higher)
+- **npm** or **yarn** for package management
+- **Backend API**: Ensure the backend is set up and running. [Stock Simulator Backend](https://github.com/fnldesign/stock-simulator-backend.git).
 
-1. Clone the repository to your local machine:
+---
+
+### **Installation Steps**
+
+1. **Clone the Repository**:
 
 ```bash
 git clone https://github.com/fnldesign/stock-simulator-frontend.git
-cd stock-investment-simulation-frontend
-``` 
+cd stock-simulator-frontend
+```
 
-2. Install project dependencies:
+2. **Install Dependencies**:
 
 ```bash
 npm install
@@ -53,9 +60,17 @@ npm install
 yarn install
 ```
 
-3. Executing the Project
+3. **Environment Configuration**:
 
-To run the project in development mode:
+Create a `.env` file in the root directory and set default values:
+
+```bash
+VITE_APP_RISK_TOLERANCE=Medium
+VITE_APP_ANALYSIS_PERIOD="1 Year"
+VITE_API_BASE_URL="http://localhost:5000/api"
+```
+
+4. **Run the Project**:
 
 ```bash
 npm run dev
@@ -63,39 +78,92 @@ npm run dev
 yarn run dev
 ```
 
-## Folder Structure
-Below is the basic folder structure of the project:
+The project will start on [http://localhost:5173](http://localhost:5173).
+
+---
+
+## **Folder Structure**
 
 ```graphql
 src/
-├── components/ # Reusable React components
-│ ├── SimulationForm.jsx # Form for inserting simulation data
-│ ├── SimulationResults.jsx # Display of simulation results
-│ ├── ApexCandlestickChart.jsx # Candlestick chart using ApexCharts
-│ ├── LightweightCandlestickChart.jsx # Candlestick chart using TradingView
-│ ├── StockChart.jsx # Line Chart using Chart.js
-├── pages/ # Main pages of the application
-│ └── HomePage.jsx # Home page that contains the form and results
-├── App.jsx # React core component
-├── index.js # React entry point
-└── styles/ # CSS styles for components and pages
+├── components/         # Reusable React components
+│   ├── SimulationForm.jsx      # Form for inserting simulation data
+│   ├── SimulationResults.jsx   # Display of simulation results
+│   ├── ApexCandlestickChart.jsx # Candlestick chart using ApexCharts
+│   ├── LightweightCandlestickChart.jsx # Candlestick chart using Lightweight Charts
+│   ├── StockChart.jsx           # Line Chart using Chart.js
+├── pages/              # Main pages
+│   └── HomePage.jsx    # Home page with form and results
+├── services/           # API services
+│   └── apiService.js   # Functions for API calls
+├── App.jsx             # React root component
+├── index.js            # Entry point
+└── styles/             # CSS styles
     ├── HomePage.css
     ├── SimulationForm.css
     └── ApexCandlestickChart.css
 ```
 
-## Contribution Instructions
-- Fork the repository.
-- Create a branch for your feature or bug fix (git checkout -b feature/nova-feature).
-- Commit your changes (git commit -m 'Add new feature').
-- Push to the branch (git push origin feature/nova-feature).
-- Open a Pull Request.
+---
 
-## License
-This project is licensed under the MIT License. See the LICENSE file for more information.
+## **Contribution Instructions**
 
-## Contact
-If you have any questions or suggestions, feel free to open an issue in the repository or get in touch at fnldesign@hotmail.com.
+We are using **Git Flow** for managing branches. Please adhere to the following guidelines:
 
-## Thanks
-Special thanks to the open source libraries and frameworks used in this project, including React, ApexCharts, TradingView and Chart.js.
+1. **Fork** the repository.
+2. **Clone** the repository to your machine:
+
+   ```bash
+   git clone https://github.com/<your-username>/stock-simulator-frontend.git
+   cd stock-simulator-frontend
+   ```
+
+3. Create a **feature branch** using Git Flow:
+
+   ```bash
+   git flow feature start feature-name
+   ```
+
+4. **Make your changes**, test them thoroughly, and commit:
+
+   ```bash
+   git add .
+   git commit -m "Add feature: description of the feature"
+   ```
+
+5. Push your feature branch:
+
+   ```bash
+   git push origin feature/feature-name
+   ```
+
+6. Open a **Pull Request** for code review.
+
+---
+
+## **License**
+
+This project is licensed under the **Creative Commons Attribution-NonCommercial 4.0 International License** (CC BY-NC 4.0).  
+See the [LICENSE.md](./LICENSE.md) file for details.
+
+---
+
+## **Contact**
+
+For questions or contributions, reach out via:
+
+- Email: **fnldesign@hotmail.com**
+- Open an issue on this repository.
+
+---
+
+## **Changelog**
+
+- **Dynamic Options**: Advanced options now use environment variables for default values.
+- **Improved UX**: Advanced Options accordion with analysis period adjustment.
+- **Error Handling**: Clear error messages displayed for API failures.
+- **Git Flow**: Adopted Git Flow for branch management.
+
+---
+
+**Thank you for contributing to the Stock Investment Simulation Project!** 🚀
