@@ -9,10 +9,11 @@ form {
 }
 
 .form-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Espaçamento entre o ícone e o texto */
 }
+
 
 .form-instructions {
   font-size: 1rem;

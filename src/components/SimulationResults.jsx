@@ -12,6 +12,7 @@ const SimulationResults = ({ result }) => {
       <div className="growth-info">
         <p>Growth Rate: {result.growth_rate}%</p>
         <p>Value Change: ${result.value_change}</p>
+        <p>End Value: {result.end_value}</p>
       </div>
       <h3>Closing Price Line Chart</h3>
       <StockChart 

@@ -91,6 +91,12 @@ const StockChart = ({
           display: true,
           text: xField,
         },
+        ticks: {
+          maxRotation: 45, // Inclina os labels em 45°
+          minRotation: 45,
+          padding: 10, // Adiciona espaçamento entre os labels e o eixo
+          autoSkip: true, // Ajusta automaticamente para evitar sobreposição
+        },
       },
       y: {
         title: {

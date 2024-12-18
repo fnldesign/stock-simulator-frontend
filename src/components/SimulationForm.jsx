@@ -1,202 +1,185 @@
-import React, { useState, useEffect } from "react";
-import { simulateInvestment } from "../services/apiService";
+// Componente SimulationForm atualizado com integração ao simulateInvestmentService
+import React, { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { TextField, Button, Typography, Accordion, AccordionSummary, AccordionDetails } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import Select from "react-select";
+import { simulateInvestment } from "../services/simulateInvestmentService";
+import StockIcon from "../assets/icons/app_icon.png";
 import "./SimulationForm.css";
 
 const SimulationForm = ({ onSimulate }) => {
-  // Valores padrão do ambiente
-  const defaultRiskTolerance = import.meta.env.VITE_APP_RISK_TOLERANCE || "Medium";
-  const defaultAnalysisPeriod = import.meta.env.VITE_APP_ANALYSIS_PERIOD || "1 Year";
-
-  // Estado principal do formulário
-  const [formData, setFormData] = useState({
-    stockSymbol: "",
-    startDate: "",
-    endDate: "",
-    initialInvestment: "",
-  });
-
-  // Estado das opções avançadas
-  const [advancedOptions, setAdvancedOptions] = useState({
-    riskTolerance: defaultRiskTolerance,
-    analysisPeriod: defaultAnalysisPeriod,
-  });
-
-  const [showAdvancedOptions, setShowAdvancedOptions] = useState(false);
-  const [simulationResults, setSimulationResults] = useState(null);
+  const { control, handleSubmit, setValue } = useForm();
+  const [expanded, setExpanded] = useState(false); // Controle do Accordion
+  const [selectedPeriod, setSelectedPeriod] = useState("1 Year"); // Estado para analysisPeriod
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  // Atualização das datas com base no período de análise
-  useEffect(() => {
-    const updateDatesForPeriod = () => {
-      const today = new Date();
-      const periods = {
-        "1 Year": 365,
-        "6 Months": 180,
-        "3 Months": 90,
-      };
-
-      if (!formData.startDate) {
-        // Sem data inicial preenchida
-        const endDate = today.toISOString().split("T")[0];
-        const startDate = new Date(today.setDate(today.getDate() - periods[advancedOptions.analysisPeriod]))
-          .toISOString()
-          .split("T")[0];
-
-        setFormData((prev) => ({ ...prev, startDate, endDate }));
-      } else {
-        // Com data inicial preenchida
-        const startDate = formData.startDate;
-        const endDate = new Date(new Date(startDate).setDate(new Date(startDate).getDate() + periods[advancedOptions.analysisPeriod]))
-          .toISOString()
-          .split("T")[0];
-
-        setFormData((prev) => ({ ...prev, endDate }));
-      }
-    };
-
-    updateDatesForPeriod();
-  }, [advancedOptions.analysisPeriod]);
-
-  // Manipulação dos inputs
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+  const handleAccordionChange = () => {
+    setExpanded(!expanded);
   };
 
-  const handleAdvancedChange = (e) => {
-    const { name, value } = e.target;
-    setAdvancedOptions((prev) => ({ ...prev, [name]: value }));
+  const handleAnalysisPeriodChange = (option) => {
+    setSelectedPeriod(option.value); // Atualiza o estado local
+
+    // Lógica: Atualizar startDate e endDate com base no período selecionado
+    const today = new Date();
+    let startDate = new Date();
+
+    switch (option.value) {
+      case "1 Year":
+        startDate.setFullYear(today.getFullYear() - 1);
+        break;
+      case "6 Months":
+        startDate.setMonth(today.getMonth() - 6);
+        break;
+      case "3 Months":
+        startDate.setMonth(today.getMonth() - 3);
+        break;
+      default:
+        break;
+    }
+
+    setValue("startDate", startDate.toISOString().split("T")[0]);
+    setValue("endDate", today.toISOString().split("T")[0]);
   };
 
-  // Envio do formulário
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setLoading(true);
-
+    setErrorMessage(null);
     try {
-      const data = {
-        symbol: formData.stockSymbol,
-        start_date: formData.startDate,
-        end_date: formData.endDate,
-        start_value: parseFloat(formData.initialInvestment),
-      };
-
-      // Chamada da API
-      const response = await simulateInvestment(data);
-
-      // Verificação do status da API
-      console.error(response.status);
-      if (response.status !== 200) {
-        const errorMessage = response.error || "An unexpected error occurred.";
-        throw new Error(`API Error: ${errorMessage}`);
-      }
-
-      if (response.status == 400) {
-        const errorMessage = response.error || "An unexpected error occurred.";
-        throw new Error(`API Error: ${errorMessage}`);
-      }
-      onSimulate(response.data);
-      setSimulationResults(response.data);
-
+      const response = await simulateInvestment({
+        symbol: data.symbol,
+        start_date: data.startDate,
+        end_date: data.endDate,
+        start_value: parseFloat(data.initialInvestment),
+        benchmarks: data.benchMarkIndex ? data.benchMarkIndex.map((b) => b.value) : [],
+      });
+      onSimulate && onSimulate(response.data);
     } catch (error) {
       console.error("Error simulating investment:", error);
-      setSimulationResults({
-        errorMessage: "Failed to simulate investment. " + (error.message || "Please try again."),
-      });
-    }
-    finally {
+      setErrorMessage("An error occurred while simulating the investment. Please try again.");
+    } finally {
       setLoading(false);
     }
   };
 
+  const benchmarkOptions = [
+    { value: "IBOV", label: "IBOV" },
+    { value: "CDI", label: "CDI" },
+    { value: "S&P 500", label: "S&P 500" },
+    { value: "Down Jones", label: "Down Jones" },
+    { value: "AGG", label: "Aggregate Bond Index (AGG)" },
+  ];
+
+  const analysisPeriodOptions = [
+    { value: "1 Year", label: "1 Year" },
+    { value: "6 Months", label: "6 Months" },
+    { value: "3 Months", label: "3 Months" },
+  ];
+
   return (
     <div className="simulation-container">
-      <form className="simulation-form" onSubmit={handleSubmit}>
-        <h2 className="form-title">Stock Investment Simulation</h2>
-        <p className="form-instructions">
-          Please provide the following information to simulate your investment:
-        </p>
+      <div className="form-header">
+        <img src={StockIcon} alt="Stock Icon" className="form-icon" style={{ width: "40px", height: "40px", marginRight: "10px" }} />
 
-        {/* Campos do Formulário */}
-        <input
-          type="text"
-          name="stockSymbol"
-          placeholder="Stock Symbol (e.g., AAPL)"
-          value={formData.stockSymbol}
-          onChange={handleInputChange}
-          required
-        />
+        <Typography variant="h4" component="h2" className="form-title">
+          Stock Investment Simulation
+        </Typography>
+      </div>
+      <Typography variant="body1" paragraph className="form-instructions">
+        Please provide the following information to simulate your investment:
+      </Typography>
 
-        <input
-          type="date"
-          name="startDate"
-          value={formData.startDate}
-          onChange={handleInputChange}
-          required
-        />
-
-        <input
-          type="date"
-          name="endDate"
-          value={formData.endDate}
-          onChange={handleInputChange}
-          required
-        />
-
-        <input
-          type="number"
-          name="initialInvestment"
-          placeholder="Initial Investment Value"
-          value={formData.initialInvestment}
-          onChange={handleInputChange}
-          required
-        />
-
-        {/* Opções Avançadas */}
-        <div className="accordion">
-          <div className="accordion-header" onClick={() => setShowAdvancedOptions(!showAdvancedOptions)}>
-            <h3>Advanced Options</h3>
-            <span>{showAdvancedOptions ? "▲" : "▼"}</span>
-          </div>
-          {showAdvancedOptions && (
-            <div className="accordion-content">
-              <label>
-                Risk Tolerance:
-                <select name="riskTolerance" value={advancedOptions.riskTolerance} onChange={handleAdvancedChange}>
-                  <option value="Low">Low</option>
-                  <option value="Medium">Medium</option>
-                  <option value="High">High</option>
-                </select>
-              </label>
-
-              <label>
-                Analysis Period:
-                <select name="analysisPeriod" value={advancedOptions.analysisPeriod} onChange={handleAdvancedChange}>
-                  <option value="1 Year">1 Year</option>
-                  <option value="6 Months">6 Months</option>
-                  <option value="3 Months">3 Months</option>
-                </select>
-              </label>
-            </div>
+      <form onSubmit={handleSubmit(onSubmit)} className="simulation-form">
+        <Controller
+          name="symbol"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField {...field} label="Stock Symbol" placeholder="e.g., AAPL" variant="outlined" fullWidth />
           )}
-        </div>
+        />
 
-        <p className="terms-text">
-          By simulating this investment, you agree to the
-          <a href="/terms" className="terms-link" target="_blank" rel="noopener noreferrer">Terms & Conditions</a>
-        </p>
+        <Controller
+          name="startDate"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField {...field} label="Start Date" type="date" InputLabelProps={{ shrink: true }} fullWidth />
+          )}
+        />
 
-        <button type="submit" className="submit-button" disabled={loading}>
+        <Controller
+          name="endDate"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField {...field} label="End Date" type="date" InputLabelProps={{ shrink: true }} fullWidth />
+          )}
+        />
+
+        <Controller
+          name="initialInvestment"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <TextField
+              {...field}
+              label="Initial Investment Value"
+              type="number"
+              placeholder="Enter initial value"
+              variant="outlined"
+              fullWidth
+            />
+          )}
+        />
+
+        <Accordion expanded={expanded} onChange={handleAccordionChange} className="advanced-options">
+          <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="h6" className="accordion-title">Advanced Options</Typography>
+          </AccordionSummary>
+          <AccordionDetails style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <Controller
+              name="analysisPeriod"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  options={analysisPeriodOptions}
+                  placeholder="Select Analysis Period"
+                  onChange={(option) => {
+                    field.onChange(option); // Atualiza o React Hook Form
+                    handleAnalysisPeriodChange(option); // Atualiza lógica local
+                  }}
+                  value={analysisPeriodOptions.find((opt) => opt.value === selectedPeriod)}
+                />
+              )}
+            />
+
+            <Controller
+              name="benchMarkIndex"
+              control={control}
+              render={({ field }) => (
+                <Select {...field} options={benchmarkOptions} isMulti placeholder="Select Benchmarks" />
+              )}
+            />
+          </AccordionDetails>
+        </Accordion>
+
+        {errorMessage && <Typography color="error" align="center">{errorMessage}</Typography>}
+
+        <Typography variant="body2" align="center" className="terms-text">
+          By simulating this investment, you agree to the{' '}
+          <a href="/terms" target="_blank" rel="noopener noreferrer">
+            Terms & Conditions
+          </a>
+        </Typography>
+
+        <Button type="submit" variant="contained" color="primary" fullWidth disabled={loading}>
           {loading ? "Simulating..." : "Simulate Investment"}
-        </button>
+        </Button>
       </form>
-
-      {/* Resultados */}
-      {simulationResults?.errorMessage && (
-        <div className="error-message">
-          {simulationResults.errorMessage}
-        </div>
-      )}
     </div>
   );
 };
